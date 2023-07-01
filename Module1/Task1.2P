@@ -1,0 +1,33 @@
+// Pin Definitions
+#define PIR_SENSOR_PIN 2
+#define LED_BUILTIN_PIN 13
+
+volatile int pirState = 0; 
+
+void setup() {
+  // Initialize the PIR sensor as an input:
+  pinMode(PIR_SENSOR_PIN, INPUT);
+  // Initialize the LED as an output:
+  pinMode(LED_BUILTIN_PIN, OUTPUT);
+  // Begin the serial communication with the baud rate of 9600
+  Serial.begin(9600);
+  
+  // Attach the interrupt
+  attachInterrupt(digitalPinToInterrupt(PIR_SENSOR_PIN), motionDetected, CHANGE);
+}
+
+// The loop is empty because everything is now happening in the interrupt service routine (ISR)
+void loop() {  
+}
+
+// Interrupt service routine (ISR)
+void motionDetected() {
+  pirState = digitalRead(PIR_SENSOR_PIN);
+  if (pirState == HIGH) {  
+    digitalWrite(LED_BUILTIN_PIN, HIGH); 
+    Serial.println("Motion detected! LED is ON");
+  } else {
+    digitalWrite(LED_BUILTIN_PIN, LOW); 
+    Serial.println("No motion detected. LED is OFF");
+  }
+}
